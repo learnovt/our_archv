@@ -247,42 +247,62 @@
   }
   slider.addEventListener('scroll',()=>setTimeout(highlight,150));
 
-  // youtube bg music
-  let ytPlayer, ytReady=false, interacted=false;
+    // youtube bg music
+  let ytPlayer, ytReady = false, musicPlaying = false;
+
+  // load API
   (function(){
-    const s=document.createElement('script');
-    s.src="https://www.youtube.com/iframe_api";
+    const s = document.createElement('script');
+    s.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(s);
   })();
-  window.onYouTubeIframeAPIReady=function(){
-    ytPlayer=new YT.Player('yt-player',{
-      videoId:YOU_TUBE_ID,
-      playerVars:{autoplay:0,loop:1,playlist:YOU_TUBE_ID,controls:0},
-      events:{
-        onReady:e=>{ytReady=true;e.target.setVolume(35);}
+
+  window.onYouTubeIframeAPIReady = function(){
+    ytPlayer = new YT.Player('yt-player', {
+      videoId: YOU_TUBE_ID,
+      playerVars: {
+        autoplay: 0,
+        loop: 1,
+        playlist: YOU_TUBE_ID,
+        controls: 0,
+        modestbranding: 1,
+        showinfo: 0
+      },
+      events: {
+        onReady: e => {
+          ytReady = true;
+          e.target.setVolume(35);
+        }
       }
     });
   };
-  ['click','touchstart','keydown'].forEach(e=>{
-    document.addEventListener(e,function once(){
-      if(interacted)return;
-      interacted=true;
-      if(ytReady)ytPlayer.playVideo();
-      document.removeEventListener(e,once);
+
+  // kontrol tombol musik
+  const btnMusic = document.getElementById('toggleAuto');
+  btnMusic.textContent = "Play Music";
+
+  btnMusic.addEventListener('click', () => {
+    if (!ytReady) return;
+
+    if (!musicPlaying) {
+      ytPlayer.playVideo();
+      btnMusic.textContent = "Pause Music";
+      musicPlaying = true;
+    } else {
+      ytPlayer.pauseVideo();
+      btnMusic.textContent = "Play Music";
+      musicPlaying = false;
+    }
+  });
+
+  // auto pause music saat video dimainkan
+  const vids = document.querySelectorAll('video, iframe');
+  vids.forEach(v => {
+    v.addEventListener('play', () => {
+      if (ytReady) ytPlayer.pauseVideo();
     });
   });
 
-  // pause music when video play
-  const vids=document.querySelectorAll('video');
-  vids.forEach(v=>{
-    v.addEventListener('play',()=>{ if(ytReady)ytPlayer.pauseVideo(); });
-    v.addEventListener('ended',resume);
-    v.addEventListener('pause',()=>setTimeout(resume,500));
-  });
-  function resume(){
-    const any=[...vids].some(v=>!v.paused&&!v.ended);
-    if(!any&&ytReady&&interacted)ytPlayer.playVideo();
-  }
 
   document.getElementById('driveBtn').onclick=()=>{window.location.href=DRIVE_LINK;}
   </script>
