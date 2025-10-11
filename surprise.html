@@ -7,11 +7,13 @@
   <meta name="theme-color" content="#2b002b">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
     :root{
       --pink-1:#ff8fb9;
       --pink-2:#ff4d85;
       --bg-dark:#0b0010;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -22,7 +24,7 @@
       overflow-x:hidden;
     }
 
-    /* hearts animation only */
+    /* hearts animation */
     .hearts { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
     .heart{
       position:absolute; 
@@ -79,9 +81,32 @@
     /* VIDEO GRID */
     .video-section{ margin-top:36px; padding:18px; border-radius:14px; }
     .video-title{ text-align:center; color:#ffd6e6; font-size:1.1rem; margin-bottom:10px; }
-    .video-grid{ display:grid; gap:18px; grid-template-columns:repeat(2,1fr); justify-items:center; }
-    .video-card{ width:100%; max-width:520px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,0.05); padding:8px; box-shadow:0 12px 40px rgba(0,0,0,0.4); }
-    .video-card video{ width:100%; border-radius:8px; display:block; }
+    .video-grid{
+      display: grid;
+      gap:18px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .video-card{
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
+      background:rgba(255,255,255,0.05);
+      padding:8px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.4);
+    }
+    .video-wrapper{
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .video-wrapper iframe{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top:0;
+      left:0;
+      border:0;
+    }
 
     .cta{ text-align:center; margin-top:32px; }
     .btn-cta{
@@ -93,7 +118,6 @@
 
     @media(max-width:600px){
       .photo-card img{ height:380px; }
-      .video-grid{ grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -111,12 +135,29 @@
         <div class="photo-card"><img src="bg1.png"><div class="meta">Momen paling hangat 💕</div></div>
         <div class="photo-card"><img src="bg2.png"><div class="meta">Awal cerita kita ✨</div></div>
         <div class="photo-card"><img src="bg3.png"><div class="meta">Malu-malu candu 😂</div></div>
+        <div class="photo-card"><img src="bg10.png"><div class="meta">Selalu bersama 💞</div></div>
         <div class="photo-card"><img src="bg4.png"><div class="meta">Pengalaman pertama 🫀</div></div>
-        <div class="photo-card"><img src="bg5.png"><div class="meta">Pengalaman pertama 🫀</div></div>
-        <div class="photo-card"><img src="bg6.png"><div class="meta">Pengalaman pertama 🫀</div></div>
-        <div class="photo-card"><img src="bg7.png"><div class="meta">Kita dan senja ☀️</div></div>
-        <div class="photo-card"><img src="bg8.png"><div class="meta">Kita dan senja ☀️</div></div>
-        <div class="photo-card"><img src="bg9.png"><div class="meta">Kita dan senja ☀️</div></div>
+        <div class="photo-card"><img src="bg5.png"><div class="meta">Kenangan manis 🌸</div></div>
+        <div class="photo-card"><img src="bg6.png"><div class="meta">Kita dan senja ☀️</div></div>
+        <div class="photo-card"><img src="bg7.png"><div class="meta">Momen bahagia 😍</div></div>
+        <div class="photo-card"><img src="bg8.png"><div class="meta">Hari spesial 🥰</div></div>
+        <div class="photo-card"><img src="bg9.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg11.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg12.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg13.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg14.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg15.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg16.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg17.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg18.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg19.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg20.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg21.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg22.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg23.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg24.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg25.png"><div class="meta">Selalu bersama 💞</div></div>
+        <div class="photo-card"><img src="bg26.png"><div class="meta">Selalu bersama 💞</div></div>
       </div>
       <div class="slider-controls">
         <button class="ctrl-btn" id="prevBtn">‹ Prev</button>
@@ -126,72 +167,28 @@
     </section>
 
     <section class="video-section">
-      <div class="video-title">🎬 Video Kenangan 🎬</div>
+      <div class="video-title">🎬 Fresh Momment 🎬</div>
+      <div class="video-title">🔍 sesuaikan resolusinya 🔍</div>
       <div class="video-grid">
-        <div class="video-card">
-          <iframe 
-              width="320" 
-              height="560" 
-              src="https://www.youtube.com/embed/bQGYcxro8zE" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-card">
-          <iframe 
-              width="320" 
-              height="560" 
-              src="https://www.youtube.com/embed/aa42kBwiTXw" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-card">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/F9-renUTJ0o?si=Q0CwQ7AOH1eKM1zo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="video-card">
-          <iframe 
-              width="320" 
-              height="560" 
-              src="https://www.youtube.com/embed/bQGYcxro8zE" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-card">
-          <iframe 
-              width="320" 
-              height="560" 
-              src="https://www.youtube.com/embed/bQGYcxro8zE" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-card">
-          <iframe 
-              width="320" 
-              height="560" 
-              src="https://www.youtube.com/embed/bQGYcxro8zE" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-card">
-          <iframe 
-              width="320" 
-              height="560" 
-              src="https://www.youtube.com/embed/bQGYcxro8zE" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        </div>
-       
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/bQGYcxro8zE" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/aa42kBwiTXw" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/OkAIqE_HG8o" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/vBJiz9dvgWo" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/F9-renUTJ0o?si=Q0CwQ7AOH1eKM1zo" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
+      </div>
+    </section>
+    <section class="video-section">
+      <div class="video-title">🎬 Old Momment 🎬</div>
+      <div class="video-grid">
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/1h8300j8inw" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/L_NP0Vlpd18" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/ekxNDbxxyZA" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/F9-renUTJ0o?si=Q0CwQ7AOH1eKM1zo" allowfullscreen></iframe></div></div>
+        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/bQGYcxro8zE" allowfullscreen></iframe></div></div>
       </div>
     </section>
 
@@ -203,108 +200,78 @@
   <div id="yt-player" style="display:none"></div>
 
   <script>
-  const YOU_TUBE_ID = 'KNiGzn7dkIo';
-  const DRIVE_LINK = 'https://drive.google.com/drive/folders/1AbCdEfGhIjKlMn';
-  const AUTO_SCROLL_INTERVAL = 4000;
+    const YOU_TUBE_ID = 'KNiGzn7dkIo';
+    const DRIVE_LINK = 'https://drive.google.com/drive/folders/1i4E2WWGcOjIvaiZVrxtll00aKxVfaWdN?usp=sharing';
+    const AUTO_SCROLL_INTERVAL = 4000;
 
-  // falling hearts only
-  const hearts = document.getElementById('hearts');
-  function spawnHeart(){
-    const h = document.createElement('div');
-    h.className='heart';
-    h.textContent='💖';
-    h.style.left = Math.random()*100 + 'vw';
-    h.style.animationDuration = 6 + Math.random()*5 + 's';
-    h.style.fontSize = 12 + Math.random()*26 + 'px';
-    hearts.appendChild(h);
-    setTimeout(()=>h.remove(),12000);
-  }
-  setInterval(spawnHeart,600);
+    // hearts
+    const hearts = document.getElementById('hearts');
+    function spawnHeart(){
+      const h = document.createElement('div');
+      h.className='heart';
+      h.textContent='💖';
+      h.style.left = Math.random()*100 + 'vw';
+      h.style.animationDuration = 6 + Math.random()*5 + 's';
+      h.style.fontSize = 12 + Math.random()*26 + 'px';
+      hearts.appendChild(h);
+      setTimeout(()=>h.remove(),12000);
+    }
+    setInterval(spawnHeart,600);
 
-  // slider
-  const slider=document.getElementById('photoSlider');
-  const cards=[...slider.querySelectorAll('.photo-card')];
-  let autoScroll=true, timer;
-  function startAuto(){ stopAuto(); autoScroll=true; timer=setInterval(nextSlide, AUTO_SCROLL_INTERVAL); }
-  function stopAuto(){ autoScroll=false; clearInterval(timer); }
-  startAuto();
+    // slider
+    const slider=document.getElementById('photoSlider');
+    const cards=[...slider.querySelectorAll('.photo-card')];
+    let autoScroll=true, timer;
+    function startAuto(){ stopAuto(); autoScroll=true; timer=setInterval(nextSlide, AUTO_SCROLL_INTERVAL); }
+    function stopAuto(){ autoScroll=false; clearInterval(timer); }
+    startAuto();
 
-  function nextSlide(){
-    const w=slider.scrollWidth/cards.length;
-    slider.scrollBy({left:w,behavior:'smooth'});
-  }
-  document.getElementById('nextBtn').onclick=()=>{stopAuto();nextSlide();}
-  document.getElementById('prevBtn').onclick=()=>{stopAuto();slider.scrollBy({left:-slider.clientWidth/1.2,behavior:'smooth'});}
-  document.getElementById('toggleAuto').onclick=()=>{autoScroll?stopAuto():startAuto();document.getElementById('toggleAuto').textContent=autoScroll?'Pause Music':'Play Music';}
+    function nextSlide(){
+      const w=slider.scrollWidth/cards.length;
+      slider.scrollBy({left:w,behavior:'smooth'});
+    }
+    document.getElementById('nextBtn').onclick=()=>{stopAuto();nextSlide();}
+    document.getElementById('prevBtn').onclick=()=>{stopAuto();slider.scrollBy({left:-slider.clientWidth/1.2,behavior:'smooth'});}
+    document.getElementById('toggleAuto').onclick=()=>{autoScroll?stopAuto():startAuto();document.getElementById('toggleAuto').textContent=autoScroll?'Pause Music':'Play Music';}
 
-  // highlight center
-  function highlight(){
-    let center=slider.scrollLeft+slider.clientWidth/2;
-    cards.forEach(c=>{
-      let rect=c.offsetLeft+c.clientWidth/2;
-      c.classList.toggle('active',Math.abs(rect-center)<c.clientWidth/2);
-    });
-  }
-  slider.addEventListener('scroll',()=>setTimeout(highlight,150));
+    // highlight center
+    function highlight(){
+      let center=slider.scrollLeft+slider.clientWidth/2;
+      cards.forEach(c=>{
+        let rect=c.offsetLeft+c.clientWidth/2;
+        c.classList.toggle('active',Math.abs(rect-center)<c.clientWidth/2);
+      });
+    }
+    slider.addEventListener('scroll',()=>setTimeout(highlight,150));
 
     // youtube bg music
-  let ytPlayer, ytReady = false, musicPlaying = false;
+    let ytPlayer, ytReady = false, musicPlaying = false;
+    (function(){
+      const s = document.createElement('script');
+      s.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(s);
+    })();
 
-  // load API
-  (function(){
-    const s = document.createElement('script');
-    s.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(s);
-  })();
+    window.onYouTubeIframeAPIReady = function(){
+      ytPlayer = new YT.Player('yt-player', {
+        videoId: YOU_TUBE_ID,
+        playerVars: { autoplay:0, loop:1, playlist:YOU_TUBE_ID, controls:0, modestbranding:1, showinfo:0 },
+        events: { onReady: e => { ytReady = true; e.target.setVolume(35); } }
+      });
+    };
 
-  window.onYouTubeIframeAPIReady = function(){
-    ytPlayer = new YT.Player('yt-player', {
-      videoId: YOU_TUBE_ID,
-      playerVars: {
-        autoplay: 0,
-        loop: 1,
-        playlist: YOU_TUBE_ID,
-        controls: 0,
-        modestbranding: 1,
-        showinfo: 0
-      },
-      events: {
-        onReady: e => {
-          ytReady = true;
-          e.target.setVolume(35);
-        }
-      }
+    const btnMusic = document.getElementById('toggleAuto');
+    btnMusic.textContent = "Play Music";
+    btnMusic.addEventListener('click', () => {
+      if (!ytReady) return;
+      if (!musicPlaying) { ytPlayer.playVideo(); btnMusic.textContent="Pause Music"; musicPlaying=true; }
+      else { ytPlayer.pauseVideo(); btnMusic.textContent="Play Music"; musicPlaying=false; }
     });
-  };
 
-  // kontrol tombol musik
-  const btnMusic = document.getElementById('toggleAuto');
-  btnMusic.textContent = "Play Music";
+    const vids = document.querySelectorAll('video, iframe');
+    vids.forEach(v => { v.addEventListener('play', () => { if (ytReady) ytPlayer.pauseVideo(); }); });
 
-  btnMusic.addEventListener('click', () => {
-    if (!ytReady) return;
-
-    if (!musicPlaying) {
-      ytPlayer.playVideo();
-      btnMusic.textContent = "Pause Music";
-      musicPlaying = true;
-    } else {
-      ytPlayer.pauseVideo();
-      btnMusic.textContent = "Play Music";
-      musicPlaying = false;
-    }
-  });
-
-  // auto pause music saat video dimainkan
-  const vids = document.querySelectorAll('video, iframe');
-  vids.forEach(v => {
-    v.addEventListener('play', () => {
-      if (ytReady) ytPlayer.pauseVideo();
-    });
-  });
-
-
-  document.getElementById('driveBtn').onclick=()=>{window.location.href=DRIVE_LINK;}
+    document.getElementById('driveBtn').onclick=()=>{window.location.href=DRIVE_LINK;}
   </script>
 </body>
 </html>
