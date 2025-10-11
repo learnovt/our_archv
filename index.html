@@ -177,7 +177,7 @@
 
   <!-- Centered music button -->
   <div class="musicWrap" aria-hidden="false">
-    <button id="musicBtn" class="musicBtn" aria-pressed="false" title="Play / Pause musik">🎵</button>
+    <button id="musicBtn" class="musicBtn" aria-pressed="false" title="Play / Pause musik">▶️</button>
   </div>
 
   <script>
@@ -185,8 +185,8 @@
        CONFIG — GANTI SESUAI KEBUTUHAN
        ============================ */
     const PASSWORD = "06022022"; // <- password yang kamu pilih
-    const DRIVE_LINK = "https://drive.google.com/drive/folders/1AbCdEfGhIjKlMn"; // <- ganti dengan link Drive album kalian
-    const YOUTUBE_VIDEO_ID = "vD5oMyLHspE"; // <- dari link: https://youtu.be/vD5oMyLHspE
+    const DRIVE_LINK = "https://drive.google.com/drive/folders/1i4E2WWGcOjIvaiZVrxtll00aKxVfaWdN?usp=sharing"; // <- ganti dengan link Drive album kalian
+    const YOUTUBE_VIDEO_ID = "vD5oMyLHspE"; // <- dari link: https://youtu.be/vD5oMyLHspE https://youtu.be/Bk2ufuj9tgU?si=BHL3JgLpjz7A4q9r
     const BG_FILENAME = "bg.png"; // <- ganti jika kamu pakai nama file background lain
     /* ============================ */
 
@@ -298,7 +298,7 @@
         musicPlaying = true;
       } else {
         if (player) player.pauseVideo();
-        musicBtn.innerHTML = '🎵';
+        musicBtn.innerHTML = '▶️';
         musicBtn.setAttribute('aria-pressed','false');
         musicPlaying = false;
       }
