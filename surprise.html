@@ -3,213 +3,991 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>💞 Kenangan Kita 💞</title>
-  <meta name="theme-color" content="#2b002b">
+  <title>Buku Kenangan Kita 💞</title>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    /* Mengimpor font */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@400;700&display=swap');
 
     :root{
       --pink-1:#ff8fb9;
       --pink-2:#ff4d85;
-      --bg-dark:#0b0010;
     }
-
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family:'Poppins',sans-serif;
-      background: linear-gradient(160deg, var(--bg-dark), #1a001a 60%, #32001f);
-      color:#fff;
-      overflow-x:hidden;
-    }
-
-    /* hearts animation */
-    .hearts { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
-    .heart{
-      position:absolute; 
-      font-size:18px; 
-      opacity:0.8;
-      color: #ff8fb9;
-      animation: fall linear forwards;
-    }
-    @keyframes fall{
-      0%{ transform:translateY(-10vh) scale(0.8); opacity:0; }
-      20%{ opacity:1; }
-      100%{ transform:translateY(110vh) scale(1.2); opacity:0; }
-    }
-
-    header{ position:relative; z-index:2; padding:28px 20px 6px; text-align:center; }
-    header h1{ margin:0; font-size:clamp(1.6rem,3.2vw,2.2rem); color:var(--pink-1);
-             text-shadow: 0 6px 26px rgba(255,110,160,.18); letter-spacing:0.6px; }
-    header p.lead{ margin:8px 0 18px; color:#ffd6e6; opacity:0.95; }
-
-    main{ position:relative; z-index:2; padding:8px 14px 80px; max-width:1100px; margin:0 auto; }
-
-    /* PHOTO SLIDER */
-    .photo-slider{
-      display:flex; gap:18px; padding:18px;
-      overflow-x:auto; scroll-snap-type:x mandatory; 
-      -webkit-overflow-scrolling:touch;
-      scroll-behavior:smooth;
-    }
-    .photo-card{
-      scroll-snap-align:center;
-      flex:0 0 auto;
-      width:78%;
-      max-width:420px;
-      border-radius:18px;
-      overflow:hidden;
-      background:rgba(255,255,255,0.05);
-      box-shadow:0 12px 30px rgba(255,80,140,0.12);
-      transform-origin:center;
-      transition:transform .45s, box-shadow .45s;
-    }
-    .photo-card.active{ transform:scale(1.04); box-shadow:0 18px 60px rgba(255,80,140,0.25); }
-    .photo-card img{ width:100%; height:460px; object-fit:cover; display:block; }
-    .photo-card .meta{
-      padding:12px 14px; font-size:0.95rem; color:#ffdff0; background:rgba(0,0,0,0.3);
-    }
-
-    .slider-controls{ text-align:center; margin-top:10px; display:flex; gap:12px; justify-content:center; align-items:center; }
-    .ctrl-btn{
-      background:rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.05);
-      padding:8px 12px; border-radius:999px; color:#fff; cursor:pointer; font-weight:600;
-    }
-
-    /* VIDEO GRID */
-    .video-section{ margin-top:36px; padding:18px; border-radius:14px; }
-    .video-title{ text-align:center; color:#ffd6e6; font-size:1.1rem; margin-bottom:10px; }
-    .video-grid{
-      display: grid;
-      gap:18px;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    }
-    .video-card{
-      width:100%;
-      border-radius:12px;
-      overflow:hidden;
-      background:rgba(255,255,255,0.05);
-      padding:8px;
-      box-shadow:0 12px 40px rgba(0,0,0,0.4);
-    }
-    .video-wrapper{
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden; /* Mencegah scroll */
+      background: center/cover no-repeat fixed url('bg.png'); /* BG dari welcome.html */
       position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
     }
-    .video-wrapper iframe{
-      position: absolute;
+    
+    /* Layer Background (Blur + Overlay) */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: center/cover no-repeat fixed url('bg.png');
+      filter: blur(8px) saturate(1.1);
+      transform: scale(1.03);
+      z-index: -2;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(255,182,193,0.2), rgba(198,223,255,0.05));
+      z-index: -1;
+      backdrop-filter: contrast(1.02) brightness(1.05);
+    }
+    
+    /* Container untuk memposisikan buku di tengah */
+    .book-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* Ini adalah buku kita */
+    #flipbook {
+      width: 90vw; /* Lebar buku 90% viewport */
+      height: 80vh; /* Tinggi buku 80% viewport */
+      max-width: 1200px;
+      max-height: 800px;
+      transition: margin-left 0.5s ease-in-out;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    /* Setiap halaman di dalam buku */
+    .page {
       width: 100%;
       height: 100%;
-      top:0;
-      left:0;
-      border:0;
+      background: linear-gradient(135deg, #fff, #f8f8f8); /* Warna kertas */
+      color: #333;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: 'Playfair Display', serif; /* Font buku cerita */
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
 
-    .cta{ text-align:center; margin-top:32px; }
-    .btn-cta{
-      background:linear-gradient(135deg,var(--pink-1),var(--pink-2));
-      color:#fff; padding:14px 36px; border-radius:999px; border:none;
-      font-weight:700; font-size:1.05rem; cursor:pointer;
-      box-shadow:0 12px 40px rgba(255,80,150,0.15);
+    /* Gambar di halaman */
+    .page img {
+      width: auto; /* Biarkan gambar menyesuaikan tinggi */
+      max-width: 90%;
+      height: 55%; /* Persentase tinggi halaman */
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
+    }
+    
+    /* Teks/Cerita di halaman */
+    .page .story {
+      font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+      line-height: 1.7;
+      text-align: center;
+      color: #444;
+      max-width: 90%;
+      max-height: 35%;
+      overflow: auto;
+    }
+    .page .story-title {
+      font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+      color: #000;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    /* Halaman sampul (cover) & Halaman Judul (chapter) */
+    .page.cover, .page.chapter {
+      background: linear-gradient(135deg, #4a001f, #2b002b);
+      color: #fff;
+      text-align: center;
+    }
+    .page.cover h1, .page.chapter h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin: 0;
+      color: var(--pink-1);
+      text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+     .page.chapter h2 {
+       font-size: clamp(1.8rem, 4vw, 3rem);
+     }
+    .page.cover p, .page.chapter p {
+      font-size: 1.2rem;
+      color: #ffd6e6;
+      opacity: 0.9;
+    }
+    
+    /* Halaman video */
+    .page .video-wrapper {
+      width: 90%;
+      max-width: 500px;
+      aspect-ratio: 16/9;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
+    }
+    .page .video-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
     }
 
-    @media(max-width:600px){
-      .photo-card img{ height:380px; }
+    /* Bayangan saat halaman dilipat */
+    #flipbook .shadow {
+      transition: shadow 0.5s ease;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.2);
     }
+
+    /* Tombol Navigasi (Next/Prev) */
+    .nav-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px);
+      border-radius: 50%;
+      cursor: pointer;
+      color: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    .nav-arrow:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    #prev-page {
+      left: 20px;
+    }
+    #next-page {
+      right: 20px;
+    }
+    
+    /* Animasi Hati (dari surprise.html) */
+    .hearts { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .heart{
+      position:absolute; font-size:16px; opacity:0.9;
+      color: rgba(255,240,245,0.95);
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0% { transform: translateY(110vh) scale(.8); opacity:0; }
+      15% { opacity:0.9; }
+      100% { transform: translateY(-10vh) scale(1.25); opacity:0; }
+    }
+
+    /* Efek Kursor (dari surprise.html) */
+    .sparkle {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--pink-1); border-radius: 50%;
+      pointer-events: none; z-index: 999; opacity: 0.7;
+      box-shadow: 0 0 12px 2px var(--pink-1);
+      animation: sparkle-anim 1s forwards; transform-origin: center;
+    }
+    @keyframes sparkle-anim {
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(0) translate(calc(var(--tx, 0) * 50px), calc(var(--ty, 0) * 50px)); opacity: 0; }
+    }
+    
+    @media(max-width: 768px) {
+      /* Di HP, buku jadi 1 halaman penuh, bukan 2 halaman */
+      #flipbook { width: 100vw; height: 100vh; max-width: none; max-height: none; box-shadow: none; }
+      .nav-arrow { bottom: 15px; top: auto; transform: none; }
+      #prev-page { left: 15px; }
+      #next-page { right: 15px; }
+      .page { padding: 15px; }
+      .page img { height: 50%; } /* Sesuaikan tinggi gambar di HP */
+    }
+    
   </style>
 </head>
 <body>
   <div class="hearts" id="hearts"></div>
-
-  <header>
-    <h1>💖 OUR JOURNEY 💖</h1>
-    <p class="lead">Kenangan yang selalu indah untuk diingat...</p>
-  </header>
-
-  <main>
-    <section class="photo-wrap">
-      <div class="photo-slider" id="photoSlider">
-        <div class="photo-card"><img src="bg1.png"><div class="meta">Momen paling hangat 💕</div></div>
-        <div class="photo-card"><img src="bg2.png"><div class="meta">Awal cerita kita ✨</div></div>
-        <div class="photo-card"><img src="bg3.png"><div class="meta">Malu-malu candu 😂</div></div>
-        <div class="photo-card"><img src="bg10.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg4.png"><div class="meta">Pengalaman pertama 🫀</div></div>
-        <div class="photo-card"><img src="bg5.png"><div class="meta">Kenangan manis 🌸</div></div>
-        <div class="photo-card"><img src="bg6.png"><div class="meta">Kita dan senja ☀️</div></div>
-        <div class="photo-card"><img src="bg7.png"><div class="meta">Momen bahagia 😍</div></div>
-        <div class="photo-card"><img src="bg8.png"><div class="meta">Hari spesial 🥰</div></div>
-        <div class="photo-card"><img src="bg9.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg11.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg12.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg13.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg14.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg15.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg16.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg17.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg18.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg19.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg20.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg21.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg22.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg23.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg24.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg25.png"><div class="meta">Selalu bersama 💞</div></div>
-        <div class="photo-card"><img src="bg26.png"><div class="meta">Selalu bersama 💞</div></div>
-      </div>
-      <div class="slider-controls">
-        <button class="ctrl-btn" id="prevBtn">‹ Prev</button>
-        <button class="ctrl-btn" id="toggleAuto">Play Music</button>
-        <button class="ctrl-btn" id="nextBtn">Next ›</button>
-      </div>
-    </section>
-
-    <section class="video-section">
-      <div class="video-title">🎬 Fresh Momment 🎬</div>
-      <div class="video-title">🔍 sesuaikan resolusinya 🔍</div>
-      <div class="video-grid">
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/bQGYcxro8zE" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/aa42kBwiTXw" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/OkAIqE_HG8o" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/vBJiz9dvgWo" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/F9-renUTJ0o?si=Q0CwQ7AOH1eKM1zo" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe></div></div>
-      </div>
-    </section>
-    <section class="video-section">
-      <div class="video-title">🎬 Old Momment 🎬</div>
-      <div class="video-grid">
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/1h8300j8inw" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/L_NP0Vlpd18" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/ekxNDbxxyZA" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/F9-renUTJ0o?si=Q0CwQ7AOH1eKM1zo" allowfullscreen></iframe></div></div>
-        <div class="video-card"><div class="video-wrapper"><iframe src="https://www.youtube.com/embed/bQGYcxro8zE" allowfullscreen></iframe></div></div>
-      </div>
-    </section>
-
-    <div class="cta">
-      <button class="btn-cta" id="driveBtn">💌 Lihat Semua Kenangan Kita</button>
-    </div>
-  </main>
-
   <div id="yt-player" style="display:none"></div>
 
-  <script>
-    const YOU_TUBE_ID = 'KNiGzn7dkIo';
-    const DRIVE_LINK = 'https://drive.google.com/drive/folders/1i4E2WWGcOjIvaiZVrxtll00aKxVfaWdN?usp=sharing';
-    const AUTO_SCROLL_INTERVAL = 4000;
+  <div class="nav-arrow" id="prev-page">‹</div>
+  <div class="nav-arrow" id="next-page">›</div>
 
-    // hearts
+  <div class="book-container">
+    <div id="flipbook">
+    
+      <div class="page cover">
+        <h1>Buku Kenangan Kita</h1>
+        <p>Untuk kamu... 💖</p>
+        <p style="margin-top: 50px; font-family: 'Poppins'; opacity: 0.7;">
+          (Gunakan panah untuk membalik halaman)
+        </p>
+      </div>
+      
+      <div class="page">
+        <img src="bg2.png" alt="Awal cerita kita ✨">
+        <div class="story">
+          <div class="story-title">Awal cerita kita ✨</div>
+          <p>!! TULIS CERITA UNTUK FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg3.png" alt="Malu-malu candu 😂">
+        <div class="story">
+          <div class="story-title">Malu-malu candu 😂</div>
+          <p>!! TULIS CERITA UNTUK FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg4.png" alt="Pengalaman pertama 🫀">
+        <div class="story">
+          <div class="story-title">Pengalaman pertama 🫀</div>
+          <p>!! TULIS CERITA UNTUK FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg5.png" alt="Kenangan manis 🌸">
+        <div class="story">
+          <div class="story-title">Kenangan manis 🌸</div>
+          <p>!! TULIS CERITA UNTUK FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg6.png" alt="Kita dan senja ☀️">
+        <div class="story">
+          <div class="story-title">Kita dan senja ☀️</div>
+          <p>!! TULIS CERITA UNTUK FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg7.png" alt="Momen bahagia 😍">
+        <div class="story">
+          <div class="story-title">Momen bahagia 😍</div>
+          <p>!! TULIS CERITA UNTUK FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg8.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg9.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x1.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x2.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x3.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x4.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x5.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x6.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x7.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x8.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x9.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x10.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x11.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x12.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x13.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x14.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x15.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x16.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x17.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x18.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x19.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x20.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x21.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x22.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x23.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x24.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x25.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x26.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x27.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x28.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x29.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x30.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="x31.png" alt="Hari spesial 🥰">
+        <div class="story">
+          <div class="story-title">Hari spesial 🥰</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg11.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg12.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg13.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg14.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg15.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg16.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg17.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg18.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg19.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg20.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg21.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg22.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg23.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg24.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg25.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <img src="bg26.png" alt="Selalu bersama 💞">
+        <div class="story">
+          <div class="story-title">Selalu bersama 💞</div>
+          <p>!! GANTI JUDUL & CERITA FOTO INI !!</p>
+        </div>
+      </div>
+
+      <div class="page chapter">
+        <h2>🎬 Fresh Momment 🎬</h2>
+        <p>Video-video kenangan baru kita.</p>
+      </div>
+
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/bQGYcxro8zE" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 1</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/aa42kBwiTXw" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 2</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/OkAIqE_HG8o" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 3</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/vBJiz9dvgWo" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 4</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/F9-renUTJ0o?si=Q0CwQ7AOH1eKM1zo" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 5</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/DWgrM2TUob8" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 6</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/MqJ4f-LxywQ" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 7</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/0TtqirxjGNQ" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 8</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/c-EscdDdXFc" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 9</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+
+      <div class="page chapter">
+        <h2>🎬 Old Momment 🎬</h2>
+        <p>Momen-momen lama yang berkesan.</p>
+      </div>
+
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/1h8300j8inw" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 10</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/L_NP0Vlpd18" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 11</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/ekxNDbxxyZA" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 12</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/SOdxoE3Qpvk" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 13</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/qA1hF3ZSTgM" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 14</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page chapter">
+        <h2>🎬 Random Video 🎬</h2>
+        <p>Semua video acak yang seru.</p>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/z10cQMU3SlU" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 15</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/bVR_-0wiKm4" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 16</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/h9idMIaKphc" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 17</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/Mus0rwTg3Rs" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 18</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/QPA8lsyCFFs" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 19</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/FJaw5MMkkMs" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 20</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/dpLpdHsF69Y" allowfullscreen></iframe>
+        </div>
+        <div class="story">
+          <div class="story-title">Video Kenangan 21</div>
+          <p>!! TULIS CERITA UNTUK VIDEO INI !!</p>
+        </div>
+      </div>
+      
+      <div class="page cover">
+        <h1>To be Continued...</h1>
+        <p>Perjalanan kita masih panjang. 💖</p>
+        
+        <button class="btn-cta" id="driveBtn" 
+          style="background:linear-gradient(135deg,var(--pink-1),var(--pink-2));
+                 color:#fff; padding:14px 36px; border-radius:999px; border:none;
+                 font-weight:700; font-size:1rem; cursor:pointer; margin-top: 30px;
+                 box-shadow:0 12px 40px rgba(255,80,150,0.25);">
+          💌 Lihat Semua Sisa Kenangan
+        </button>
+      </div>
+
+      </div>
+  </div>
+
+  <script>
+    // Link Google Drive (dari file lama)
+    const DRIVE_LINK = 'https://drive.google.com/drive/folders/1i4E2WWGcOjIvaiZVrxtll00aKxVfaWdN?usp=sharing';
+    const YOU_TUBE_ID = 'KNiGzn7dkIo'; // Musik Latar
+    
+    // Inisialisasi Buku
+    $(document).ready(function () {
+      const flipbook = $("#flipbook");
+      
+      // Deteksi ukuran layar
+      let isMobile = $(window).width() <= 768;
+      
+      flipbook.turn({
+        width: isMobile ? '100vw' : '90vw', // Lebar buku
+        height: isMobile ? '100vh' : '80vh', // Tinggi buku
+        autoCenter: true, // Otomatis di tengah
+        display: isMobile ? 'single' : 'double', // 1 halaman di HP, 2 halaman di PC
+        acceleration: true, // Pakai hardware acceleration
+        gradients: true, // Gradien bayangan
+        elevation: 50, // Tinggi "kertas" saat dilipat
+        when: {
+          turned: function(event, page, view) {
+            // Saat halaman dibalik, pastikan musik latar main lagi
+            if (ytReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+              ytPlayer.playVideo();
+            }
+          }
+        }
+      });
+      
+      // Atur tombol Next
+      $("#next-page").on("click", function (e) {
+        e.preventDefault();
+        flipbook.turn("next");
+      });
+
+      // Atur tombol Prev
+      $("#prev-page").on("click", function (e) {
+        e.preventDefault();
+        flipbook.turn("previous");
+      });
+      
+      // Atur tombol Google Drive
+      document.getElementById('driveBtn').onclick=()=>{window.location.href=DRIVE_LINK;}
+      
+      // Resize handler
+      $(window).on('resize', function () {
+        let newIsMobile = $(window).width() <= 768;
+        if (newIsMobile !== isMobile) {
+          isMobile = newIsMobile;
+          flipbook.turn('display', isMobile ? 'single' : 'double');
+          flipbook.turn('size', isMobile ? '100vw' : '100vh', isMobile ? '100vw' : '80vh');
+          flipbook.turn('page', 1); // Balik ke halaman 1
+        }
+      });
+      
+      // Pause musik latar saat video kenangan diputar
+      $('#flipbook').on('click', 'iframe', function() {
+        if (ytReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+          ytPlayer.pauseVideo();
+        }
+      });
+    });
+
+    // --- Efek Hati ---
     const hearts = document.getElementById('hearts');
     function spawnHeart(){
-      const h = document.createElement('div');
-      h.className='heart';
-      h.textContent='💖';
+      const h = document.createElement('div'); h.className='heart'; h.textContent='💖';
       h.style.left = Math.random()*100 + 'vw';
       h.style.animationDuration = 6 + Math.random()*5 + 's';
       h.style.fontSize = 12 + Math.random()*26 + 'px';
@@ -217,61 +995,34 @@
       setTimeout(()=>h.remove(),12000);
     }
     setInterval(spawnHeart,600);
-
-    // slider
-    const slider=document.getElementById('photoSlider');
-    const cards=[...slider.querySelectorAll('.photo-card')];
-    let autoScroll=true, timer;
-    function startAuto(){ stopAuto(); autoScroll=true; timer=setInterval(nextSlide, AUTO_SCROLL_INTERVAL); }
-    function stopAuto(){ autoScroll=false; clearInterval(timer); }
-    startAuto();
-
-    function nextSlide(){
-      const w=slider.scrollWidth/cards.length;
-      slider.scrollBy({left:w,behavior:'smooth'});
-    }
-    document.getElementById('nextBtn').onclick=()=>{stopAuto();nextSlide();}
-    document.getElementById('prevBtn').onclick=()=>{stopAuto();slider.scrollBy({left:-slider.clientWidth/1.2,behavior:'smooth'});}
-    document.getElementById('toggleAuto').onclick=()=>{autoScroll?stopAuto():startAuto();document.getElementById('toggleAuto').textContent=autoScroll?'Pause Music':'Play Music';}
-
-    // highlight center
-    function highlight(){
-      let center=slider.scrollLeft+slider.clientWidth/2;
-      cards.forEach(c=>{
-        let rect=c.offsetLeft+c.clientWidth/2;
-        c.classList.toggle('active',Math.abs(rect-center)<c.clientWidth/2);
-      });
-    }
-    slider.addEventListener('scroll',()=>setTimeout(highlight,150));
-
-    // youtube bg music
-    let ytPlayer, ytReady = false, musicPlaying = false;
+    
+    // --- Efek Kursor ---
+    let sparkleTimer;
+    window.addEventListener('mousemove', (e) => {
+      clearTimeout(sparkleTimer);
+      sparkleTimer = setTimeout(() => {
+        const s = document.createElement('span'); s.className = 'sparkle'; document.body.appendChild(s);
+        s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px';
+        s.style.setProperty('--tx', Math.random() - 0.5); s.style.setProperty('--ty', Math.random() - 0.5);
+        setTimeout(() => s.remove(), 1000);
+      }, 50);
+    });
+    
+    // --- Musik Latar YouTube ---
+    let ytPlayer, ytReady = false;
     (function(){
-      const s = document.createElement('script');
-      s.src = "https://www.youtube.com/iframe_api";
+      const s = document.createElement('script'); s.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(s);
     })();
 
     window.onYouTubeIframeAPIReady = function(){
       ytPlayer = new YT.Player('yt-player', {
         videoId: YOU_TUBE_ID,
-        playerVars: { autoplay:0, loop:1, playlist:YOU_TUBE_ID, controls:0, modestbranding:1, showinfo:0 },
-        events: { onReady: e => { ytReady = true; e.target.setVolume(35); } }
+        playerVars: { autoplay:1, loop:1, playlist:YOU_TUBE_ID, controls:0, modestbranding:1, showinfo:0 },
+        events: { onReady: e => { ytReady = true; e.target.setVolume(35); e.target.playVideo(); } }
       });
     };
-
-    const btnMusic = document.getElementById('toggleAuto');
-    btnMusic.textContent = "Play Music";
-    btnMusic.addEventListener('click', () => {
-      if (!ytReady) return;
-      if (!musicPlaying) { ytPlayer.playVideo(); btnMusic.textContent="Pause Music"; musicPlaying=true; }
-      else { ytPlayer.pauseVideo(); btnMusic.textContent="Play Music"; musicPlaying=false; }
-    });
-
-    const vids = document.querySelectorAll('video, iframe');
-    vids.forEach(v => { v.addEventListener('play', () => { if (ytReady) ytPlayer.pauseVideo(); }); });
-
-    document.getElementById('driveBtn').onclick=()=>{window.location.href=DRIVE_LINK;}
+    
   </script>
 </body>
 </html>
