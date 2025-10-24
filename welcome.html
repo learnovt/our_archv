@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Untuk Kamu — Album Kenangan 💖</title>
+  <style>
+    /* ================== STYLE welcome.html VERSI "FILM INTRO TYPEWRITER V2" ================== */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Poppins:wght@300;400&display=swap');
+
+    :root{
+      --pink-1:#ff8fb9;
+      --font-story: 'Cutive Mono', monospace; /* Font Typewriter */
+      --font-ui: 'Poppins', sans-serif;
+    }
+
+    /* Reset & font */
+    * { box-sizing: border-box; font-family: var(--font-ui); }
+    html,body { height:100%; margin:0; overflow: hidden; background: #000; cursor: default; }
+
+    /* Partikel Canvas */
+    #particle-canvas {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    }
+
+    /* Background Container & Images */
+    .bg-container { position: fixed; inset: 0; z-index: 0; }
+    .bg {
+      position: absolute; inset:0; 
+      background: center/cover no-repeat;
+      filter: blur(8px) saturate(1.1);
+      transform: scale(1.05);
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out; 
+      animation: kenburns 25s infinite alternate;
+    }
+    .bg.is-visible { opacity: 1; }
+    @keyframes kenburns {
+      0% { transform: scale(1.05) translate(0, 0); }
+      100% { transform: scale(1.15) translate(5px, -5px); }
+    }
+    #bg-2 { animation-direction: alternate-reverse; }
+
+    /* Overlay */
+    .overlay {
+      position: fixed; inset:0; 
+      background: linear-gradient(145deg, rgba(255,182,193,0.2), rgba(255, 200, 210, 0.1), rgba(198,223,255,0.05));
+      z-index: 2;
+      backdrop-filter: contrast(1.02) brightness(1.05);
+      transition: opacity 0.5s ease-in-out;
+    }
+    .overlay.is-fading-out { opacity: 0; }
+
+    /* Konten Utama */
+    .reveal-wrap {
+      position: relative;
+      z-index: 3;
+      min-height: 100vh;
+      display:flex;
+      flex-direction: column;
+      align-items:center;
+      justify-content:center;
+      padding: 28px;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .reveal-wrap.is-fading-out { opacity: 0; }
+    
+    /* Visual Teks Typewriter */
+    .story-line {
+      font-family: var(--font-story);
+      font-size: clamp(1.4rem, 3vw, 2.0rem);
+      font-weight: 400;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      text-align: center; /* Kembali ke tengah */
+      width: 100%;
+      max-width: 800px;
+      min-height: 150px;
+      line-height: 1.6;
+      display: block; 
+    }
+    
+    /* Kursor Ketik */
+    .typing-cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1.6rem;
+      background: #fff;
+      margin-left: 5px;
+      opacity: 1;
+      animation: blink 1s infinite;
+      box-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; } 50% { opacity: 0; }
+    }
+    .typing-cursor.is-paused {
+      animation: none; opacity: 0;
+    }
+
+    /* Tombol Awal (Teks Glowing) */
+    #startPrompt {
+      background: none; border: none;
+      font-family: var(--font-story);
+      font-size: 1.8rem; color: #fff;
+      text-shadow: 0 0 10px rgba(255,255,255,0.7), 0 0 20px var(--pink-1);
+      cursor: pointer; padding: 20px;
+      position: absolute;
+      transition: opacity 0.5s ease-out;
+      animation: pulse 2.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+    #startPrompt:hover {
+      text-shadow: 0 0 20px #fff, 0 0 35px var(--pink-1);
+      animation-play-state: paused;
+    }
+    
+    /* Tombol "Next" (Gradient) */
+    .btnStyle {
+      padding: 14px 30px; border-radius: 999px; border: none;
+      font-weight: 600; font-size: 1.05rem; cursor: pointer;
+      background: linear-gradient(135deg,#ff8aa0,#c093e6); color: #fff;
+      box-shadow: 0 8px 25px rgba(200,100,180,0.25);
+      transition: all .4s ease; text-decoration: none; display: inline-block;
+      margin-top: 20px; font-family: var(--font-ui);
+      opacity: 0; transform: translateY(20px); pointer-events: none;
+    }
+    .btnStyle.is-visible {
+      opacity: 1; transform: translateY(0); pointer-events: auto;
+    }
+    .btnStyle:hover { 
+      transform: translateY(-4px) scale(1.02); 
+      box-shadow: 0 12px 35px rgba(200,100,180,0.35); 
+    }
+    
+    /* PERBAIKAN CSS: Pastikan .is-hidden bekerja */
+    .is-hidden {
+      opacity: 0 !important;
+      transform: translateY(10px);
+      pointer-events: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      animation: none !important; /* Hentikan animasi pulse */
+    }
+
+    /* Hati & Kursor */
+    .hearts { position: fixed; inset:0; pointer-events:none; z-index:4; overflow:hidden; }
+    .heart {
+      position:absolute; color: rgba(255,240,255,0.95);
+      animation: rise linear infinite;
+      font-size: 16px; opacity:0; transform-origin:center;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(.8); opacity:0; }
+      15% { opacity:0.9; }
+      100% { transform: translateY(-120vh) scale(1.25); opacity:0; }
+    }
+    .sparkle { display: none; } 
+    
+  </style>
+</head>
+<body>
+
+  <div class="bg-container">
+    <div class="bg" id="bg-1"></div>
+    <div class="bg" id="bg-2"></div>
+  </div>
+  
+  <canvas id="particle-canvas"></canvas>
+  
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  
+  <div class="hearts" id="hearts-container" aria-hidden="true"></div>
+
+  <main class="reveal-wrap" id="main-wrap">
+    
+    <div class="story-line" id="story-line">
+    </div>
+
+    <div id="startPrompt">Sentuh layar untuk memulai... 💌</div>
+      
+    <a href="surprise.html" id="nextBtn" class="btnStyle">Buka Buku Kenangan Kita 📖</a>
+    
+  </main>
+
+  <div id="youtube-player" style="display:none;"></div>
+
+<script>
+  /* ============================
+     CONFIG (Global)
+  ============================ */
+  const YOUTUBE_VIDEO_ID = "vD5oMyLHspE";
+  const BG_IMAGES = ['bg.png', 'bgw.png', 'bgw2.png', 'bgw3.png', 'bgw4.png'];
+  const LINE_PAUSE_MS = 1500; // PERBAIKAN JS: Jeda 1.5 detik
+  const FADE_SCENE_MS = 1000; 
+  const CHAR_TYPE_DELAY_MS = 70; 
+  const TRANSITION_BG_EVERY_N_LINES = 4;
+
+  /* ============================
+     TEKS LINE (TIDAK DIUBAH)
+  ============================ */
+  const lines = [
+    "Hai Cantik…💕",
+    "Tolong tap tombol putar dibawah dong 😅",
+    "Tap lagi aja kalo masih belum bunyi",
+    "Gimana kabarnya hari ini?",
+    "Jujur aku kangen… kangen banget, walaupun kita lagi jauh sekarang.",
+    "Maafin aku ya… kalo selama ini aku bikin sedih, atau jarang ada buat kamu.",
+    "Aku sadar kita semakin hari jadi makin asing, dan itu nyesek jujur.",
+    "Semoga kamu lagi bahagia, walaupun aku nggak bisa ada di dekatmu sekarang.",
+    "Selamat ulang tahun ya… semoga hari ini kamu ngerasa spesial, walau aku cuma bisa bilang dari jauh.",
+    "Aku pengen kita bisa ngobrol lagi kayak dulu… tanpa jarak, tanpa salah paham.",
+    "Aku masih belajar jadi orang yang bisa kamu andelin… sabar, ngerti kamu, dan nggak bikin kecewa biar kaya orang-orang di Tiktok 😁",
+    "Aku kangen cara kita ketawa bareng, cara kita nyambung tanpa harus banyak kata.",
+    "Sering banget aku takut jarak ini bikin kita makin jauh, tapi aku nggak mau nyerah akan hal itu.",
+    "Aku janji, aku bakal lebih usaha… demi kamu, demi perjalanan kita.",
+    "Aku sayang kamu… dan aku berharap suatu saat kita bisa dekat lagi, beneran dekat, bukan cuma di chat.",
+    "Happy birthday… may all your dreams come true, even the little ones we laugh about together ☺️"
+  ];
+
+  /* ============================
+     YOUTUBE API (Global)
+  ============================ */
+  let player;
+  let musicPlaying = false;
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('youtube-player', {
+      height: '0', width: '0', videoId: YOUTUBE_VIDEO_ID,
+      playerVars: { autoplay: 0, controls: 0, modestbranding: 1, rel: 0, fs: 0, disablekb: 1, loop: 1, playlist: YOUTUBE_VIDEO_ID }
+    });
+  }
+
+  (function loadYT() {
+    const s = document.createElement('script'); s.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(s);
+  })();
+
+  /* ========================================================
+     SCRIPT UTAMA (Jalan setelah halaman siap)
+  ======================================================== */
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. DEKLARASI ELEMEN
+    const mainWrap = document.getElementById('main-wrap');
+    const storyLine = document.getElementById('story-line');
+    const startPrompt = document.getElementById('startPrompt');
+    const nextBtn = document.getElementById('nextBtn');
+    const heartsContainer = document.getElementById('hearts-container');
+    const bg1 = document.getElementById('bg-1');
+    const bg2 = document.getElementById('bg-2');
+    const overlay = document.getElementById('overlay');
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let isBg1Active = true; let currentBgIndex = 0; let lineIndex = 0;
+    let particles = []; let animationFrameId;
+    const cursor = document.createElement('span'); cursor.className = 'typing-cursor';
+    bg1.style.backgroundImage = `url('${BG_IMAGES[0]}')`;
+
+    // 2. FUNGSI PARTIKEL (Sama)
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+    class Particle { constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 1; this.speedX = Math.random() * 0.5 - 0.25; this.speedY = Math.random() * 0.5 - 0.25; this.opacity = Math.random() * 0.5 + 0.3; } update() { this.x += this.speedX; this.y += this.speedY; if (this.size > 0.1) this.size -= 0.01; if (this.x < 0 || this.x > canvas.width) this.speedX *= -1; if (this.y < 0 || this.y > canvas.height) this.speedY *= -1; } draw() { ctx.fillStyle = `rgba(255, 192, 203, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
+    function initParticles(count = 50) { particles = []; for (let i = 0; i < count; i++) { particles.push(new Particle()); } }
+    function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach((p, index) => { p.update(); p.draw(); if (p.size <= 0.1) { particles.splice(index, 1); particles.push(new Particle()); } }); animationFrameId = requestAnimationFrame(animateParticles); }
+    initParticles(30); animateParticles();
+
+    // 3. FUNGSI-FUNGSI UTAMA
+    function transitionBackground() {
+      currentBgIndex = (currentBgIndex + 1) % BG_IMAGES.length;
+      const newImageUrl = BG_IMAGES[currentBgIndex];
+      const visibleBg = isBg1Active ? bg1 : bg2; const hiddenBg = isBg1Active ? bg2 : bg1;
+      hiddenBg.style.backgroundImage = `url('${newImageUrl}')`; isBg1Active = !isBg1Active;
+    }
+    
+    function typeCharacter(text, charIndex) {
+      if (charIndex < text.length) {
+        storyLine.insertBefore(document.createTextNode(text.charAt(charIndex)), cursor);
+        charIndex++;
+        setTimeout(() => typeCharacter(text, charIndex), CHAR_TYPE_DELAY_MS);
+      } else {
+        cursor.classList.add('is-paused'); lineIndex++; 
+        setTimeout(showNextScene, LINE_PAUSE_MS);
+      }
+    }
+
+    function showNextScene() {
+      if (lineIndex >= lines.length) {
+        overlay.classList.add('is-fading-out'); mainWrap.classList.add('is-fading-out');
+        setTimeout(() => {
+          storyLine.innerHTML = ''; startPrompt.remove(); 
+          nextBtn.classList.add('is-visible'); 
+          overlay.classList.remove('is-fading-out'); mainWrap.classList.remove('is-fading-out');
+        }, FADE_SCENE_MS + 200);
+        return; 
+      }
+      
+      const text = lines[lineIndex];
+      overlay.classList.add('is-fading-out'); mainWrap.classList.add('is-fading-out');
+      if (lineIndex > 0 && lineIndex % TRANSITION_BG_EVERY_N_LINES === 0) {
+        setTimeout(transitionBackground, FADE_SCENE_MS / 2); 
+      }
+      
+      setTimeout(() => {
+        storyLine.innerHTML = ''; storyLine.appendChild(cursor); 
+        cursor.classList.remove('is-paused'); 
+        overlay.classList.remove('is-fading-out'); mainWrap.classList.remove('is-fading-out');
+        const currentBg = isBg1Active ? bg1 : bg2; currentBg.classList.add('is-visible');
+        const otherBg = isBg1Active ? bg2 : bg1; otherBg.classList.remove('is-visible'); 
+        setTimeout(() => typeCharacter(text, 0), FADE_SCENE_MS / 2); 
+      }, FADE_SCENE_MS + 200);
+    }
+
+    function spawnHeart() {
+      const h = document.createElement('div'); h.className = 'heart'; h.textContent = '💖';
+      const size = 14 + Math.random() * 28; h.style.fontSize = size + 'px';
+      h.style.left = (Math.random() * 100) + 'vw'; h.style.bottom = (-10 - Math.random() * 20) + 'px';
+      h.style.animationDuration = (6 + Math.random() * 6) + 's'; h.style.opacity = '0.9';
+      heartsContainer.appendChild(h); setTimeout(() => h.remove(), 10000);
+    }
+    
+    // 4. LOGIKA INTERAKSI "START"
+    function startSurprise() {
+      document.body.removeEventListener('click', startSurprise); 
+      
+      // PERBAIKAN JS: Gunakan classList.add untuk menyembunyikan
+      startPrompt.classList.add('is-hidden'); 
+      
+      bg1.classList.add('is-visible');
+      if (player && typeof player.playVideo === 'function') {
+        player.setVolume(0); player.playVideo(); musicPlaying = true;
+        let volume = 0;
+        const fadeAudioIn = setInterval(() => {
+          volume += 5; if (volume >= 35) { volume = 35; clearInterval(fadeAudioIn); }
+          if (player && typeof player.setVolume === 'function') player.setVolume(volume);
+        }, 150);
+      }
+      setInterval(spawnHeart, 420); initParticles(80); 
+      setTimeout(showNextScene, 1500); 
+    }
+    
+    document.body.addEventListener('click', startSurprise, { once: true }); 
+
+  });
+</script>
+
+</body>
+</html>
