@@ -157,10 +157,36 @@
   ];
 
   /* ============================
-     YOUTUBE API (Global)
+     YOUTUBE API & STATUS (Global) - DIPERBAIKI
   ============================ */
-  let player; let musicPlaying = false;
-  function onYouTubeIframeAPIReady() { player = new YT.Player('youtube-player', { height: '0', width: '0', videoId: YOUTUBE_VIDEO_ID, playerVars: { autoplay: 0, controls: 0, modestbranding: 1, rel: 0, fs: 0, disablekb: 1, loop: 1, playlist: YOUTUBE_VIDEO_ID } }); }
+  let player; 
+  let musicPlaying = false;
+  let isPlayerReady = false; // Flag status player
+  let userHasClicked = false; // Flag status klik user
+
+  // Dipanggil YT API saat player siap
+  function onPlayerReady(event) {
+    console.log("YouTube Player Ready!");
+    isPlayerReady = true;
+    player = event.target; 
+    player.setVolume(0); 
+
+    // Jika user sudah klik SEBELUM player siap, mulai musik sekarang
+    if (userHasClicked) {
+      startAudioFadeIn();
+    }
+  }
+  
+  // Dipanggil YT API saat API-nya siap
+  function onYouTubeIframeAPIReady() {
+    new YT.Player('youtube-player', {
+      height: '0', width: '0', videoId: YOUTUBE_VIDEO_ID,
+      playerVars: { autoplay: 0, controls: 0, modestbranding: 1, rel: 0, fs: 0, disablekb: 1, loop: 1, playlist: YOUTUBE_VIDEO_ID },
+      events: { 'onReady': onPlayerReady } // Pakai event onReady
+    });
+  }
+
+  // Load script API YouTube
   (function loadYT() { const s = document.createElement('script'); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s); })();
 
   /* ========================================================
@@ -172,7 +198,7 @@
     const mainWrap = document.getElementById('main-wrap');
     const storyLine = document.getElementById('story-line');
     const startPrompt = document.getElementById('startPrompt');
-    const nextBtn = document.getElementById('nextBtn'); // Tombol next kembali ke dalam main
+    const nextBtn = document.getElementById('nextBtn'); 
     const heartsContainer = document.getElementById('hearts-container');
     const bg1 = document.getElementById('bg-1'); const bg2 = document.getElementById('bg-2');
     const overlay = document.getElementById('overlay');
@@ -204,7 +230,6 @@
         overlay.classList.add('is-fading-out'); mainWrap.classList.add('is-fading-out');
         setTimeout(() => {
           storyLine.innerHTML = ''; startPrompt.remove(); 
-          // Tombol Next langsung visible, tanpa interaksi aneh
           nextBtn.classList.add('is-visible'); 
           overlay.classList.remove('is-fading-out'); mainWrap.classList.remove('is-fading-out');
         }, FADE_SCENE_MS + 200);
@@ -229,23 +254,54 @@
 
     function spawnHeart() { const h = document.createElement('div'); h.className = 'heart'; h.textContent = '💖'; const size = 14 + Math.random() * 28; h.style.fontSize = size + 'px'; h.style.left = (Math.random() * 100) + 'vw'; h.style.bottom = (-10 - Math.random() * 20) + 'px'; h.style.animationDuration = (6 + Math.random() * 6) + 's'; h.style.opacity = '0.9'; heartsContainer.appendChild(h); setTimeout(() => h.remove(), 10000); }
     
-    // 4. LOGIKA INTERAKSI "START"
+    // Fungsi untuk memulai fade in audio (DIPERBAIKI)
+    function startAudioFadeIn() {
+      if (player && typeof player.playVideo === 'function' && typeof player.setVolume === 'function') {
+        player.playVideo(); 
+        musicPlaying = true;
+        let volume = 0;
+        const fadeAudioIn = setInterval(() => {
+          volume += 5;
+          if (volume >= 35) {
+            volume = 35;
+            clearInterval(fadeAudioIn);
+          }
+           // Tambah cek lagi di sini untuk safety
+          if (player && typeof player.setVolume === 'function') {
+             player.setVolume(volume);
+          } else {
+             clearInterval(fadeAudioIn); 
+          }
+        }, 150);
+      } else {
+        console.error("Player not ready or methods not available for fade in.");
+      }
+    }
+
+    // 4. LOGIKA INTERAKSI "START" (DIPERBAIKI)
     function startSurprise() {
+      console.log("User Clicked Start!");
+      userHasClicked = true; 
       document.body.removeEventListener('click', startSurprise); 
       startPrompt.classList.add('is-hidden'); 
       bg1.classList.add('is-visible');
-      if (player && typeof player.playVideo === 'function') {
-        player.setVolume(0); player.playVideo(); musicPlaying = true;
-        let volume = 0; const fadeAudioIn = setInterval(() => { volume += 5; if (volume >= 35) { volume = 35; clearInterval(fadeAudioIn); } if (player && typeof player.setVolume === 'function') player.setVolume(volume); }, 150);
+      
+      // Cek apakah player siap
+      if (isPlayerReady) {
+        startAudioFadeIn();
+      } else {
+        console.log("Player not ready yet, waiting for onPlayerReady..."); 
       }
-      setInterval(spawnHeart, 420); initParticles(80); 
+      
+      // Mulai visual
+      setInterval(spawnHeart, 420); 
+      initParticles(80); 
       setTimeout(showNextScene, 1500); 
     }
     
     document.body.addEventListener('click', startSurprise, { once: true }); 
     
-    // HAPUS Logika Tombol Next Interaktif, sekarang hanya link biasa
-    // nextBtn.addEventListener('click', handleNextButtonClick); 
+    // Tombol Next sekarang hanya link biasa, tidak perlu listener tambahan
 
   });
 </script>
